@@ -1,0 +1,6 @@
+sklearn
+funcy
+argparse
+scikit-multilearn
+scikit-learn
+labelbox
