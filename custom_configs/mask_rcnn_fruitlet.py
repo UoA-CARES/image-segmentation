@@ -108,6 +108,18 @@ load_from = 'https://download.openmmlab.com/mmdetection/v2.0/mask_rcnn/mask_rcnn
 work_dir = './output/fruitlets'
 
 
+vis_backends = [
+    dict(type='LocalVisBackend'),
+    dict(type='TensorboardVisBackend'),
+    dict(type='WandbVisBackend',
+         init_kwargs={
+            'project': 'mmdetection',
+            'group': 'maskrcnn-r50-fpn-1x-coco'
+         })
+]
+
+visualizer = dict(vis_backends=vis_backends)
+
 # We can set the evaluation interval to reduce the evaluation times
 train_val_interval = 3
 # We can set the checkpoint saving interval to reduce the storage cost
@@ -118,4 +130,4 @@ default_hooks = dict(checkpoint = dict(interval = 3))
 optim_wrapper = dict(optimizer = dict(lr = 0.02 / 8))
 default_hooks = dict(logger = dict(interval = 10))
 
-train_cfg = dict(max_epochs=2)
+train_cfg = dict(max_epochs=100)
