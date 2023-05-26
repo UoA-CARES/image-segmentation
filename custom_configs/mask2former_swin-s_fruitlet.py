@@ -1,4 +1,5 @@
-_base_ = '../configs/mask2former/mask2former_r50_8xb2-lsj-50e_coco.py'
+_base_ = '../configs/mask2former/mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco.py'
+
 
 # Modify dataset classes and color
 metainfo = {
@@ -58,7 +59,7 @@ model = dict(
 
 # We can still the pre-trained Mask RCNN model to obtain a higher performance
 # load_from = '../checkpoints/mask_rcnn_r50_caffe_fpn_mstrain-poly_3x_coco_bbox_mAP-0.408__segm_mAP-0.37_20200504_163245-42aa3d00.pth'
-load_from = 'https://download.openmmlab.com/mmdetection/v3.0/mask2former/mask2former_r50_8xb2-lsj-50e_coco-panoptic/mask2former_r50_8xb2-lsj-50e_coco-panoptic_20230118_125535-54df384a.pth'  # noqa
+load_from = 'https://download.openmmlab.com/mmdetection/v3.0/mask2former/mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco/mask2former_swin-s-p4-w7-224_8xb2-lsj-50e_coco_20220504_001756-c9d0c4f2.pth'  # noqa
 # Set up working dir to save files and logs.
 work_dir = './output/fruitlets/mask2former_r50_coco'
 
@@ -69,7 +70,7 @@ vis_backends = [
     dict(type='WandbVisBackend',
          init_kwargs={
             'project': 'mmdetection',
-            'group': 'mask2former_r50_8xb2-lsj-50e_coco'
+            'group': 'mask2former_swin-s-p4-w7-224_8xb2-lsj-50e'
          })
 ]
 
