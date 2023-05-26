@@ -4,3 +4,4 @@ argparse
 scikit-multilearn
 scikit-learn
 labelbox
+'git+https://github.com/facebookresearch/detectron2.git'
