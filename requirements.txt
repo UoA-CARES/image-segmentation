@@ -3,5 +3,9 @@ funcy
 argparse
 scikit-multilearn
 scikit-learn
+scikit-image
 labelbox
+Shapely
+wandb
 'git+https://github.com/facebookresearch/detectron2.git'
+'git+https://github.com/cocodataset/panopticapi.git'
