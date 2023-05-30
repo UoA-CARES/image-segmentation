@@ -1,6 +1,7 @@
 
 import imghdr
 import os
+import os.path as osp
 import re
 import json
 import xml.etree.ElementTree as ET
@@ -17,7 +18,11 @@ import multiprocessing as mp
 import time
 import functools
 import argparse
+import pandas as pd
+from collections import defaultdict
+from sklearn.model_selection import train_test_split
 # from regex import F        # (pip install Pillow)
+import shutil
 
 from PIL import ImageOps, Image, ImageEnhance,ImageColor
 from xml.dom import minidom
@@ -84,6 +89,8 @@ from panopticapi.utils import rgb2id, id2rgb
 parser = argparse.ArgumentParser(description='Convert supervisly format to COCO panoptic format')
 parser.add_argument('src', metavar='dir_src', type=str,
                     help='Path to Supervisely format directory.')
+parser.add_argument('name', metavar='project_name', type=str,
+                    help='Name of the project on Supervisely')
 parser.add_argument('--brightness', action='store_true', help='')
 parser.add_argument('--contrast', action='store_true', help='')
 
@@ -663,6 +670,79 @@ def main(agrs):
     print('Load images from :' + input_path)    
     coco_from_supervisly(input_path, outputPath, args.brightness, args.contrast)
 
+def split(root_dir, project_name):
+    ann_dir = osp.join(root_dir, project_name, 'ann')
+    img_dir = osp.join(root_dir, project_name, 'img')
+
+    data = {}
+    df = pd.DataFrame()
+    df['img_path'] = os.listdir(img_dir)
+    df['ann_path'] = df['img_path'] + '.json'
+
+    assert(set(df['ann_path'].tolist()) == set(os.listdir(ann_dir)))
+    
+    width = []
+    height = []
+    num_wire = []
+    num_shoot = []
+    num_node = []
+    num_post = []
+    num_trunk = []
+
+    for idx, row in df.iterrows():
+        ann_json = osp.join(ann_dir, row['ann_path'])
+        with open(ann_json) as f:
+            data = json.load(f)
+            width.append(data['size']['width'])
+            height.append(data['size']['height'])
+
+            classes = defaultdict(int)
+            for o in data['objects']:
+                classes[o['classTitle']] += 1
+
+            num_wire.append(classes['Wire'])
+            num_shoot.append(classes['Shoot'])
+            num_node.append(classes['Node'])
+            num_post.append(classes['Post'])
+            num_trunk.append(classes['Trunk'])
+    
+    df['width'] = width
+    df['height'] = height
+    df['n_wire'] = num_wire
+    df['n_shoot'] = num_shoot
+    df['n_node'] = num_node
+    df['n_post'] = num_post
+    df['n_trunk'] = num_trunk
+
+    print(df.head())
+
+    train_df, val_test = train_test_split(df, test_size=0.2)
+
+    val_df, test_df = train_test_split(val_test, test_size=0.2)
+
+    print(len(train_df), len(val_df), len(test_df))
+
+    splits = [('train', train_df), ('val', val_df), ('test', test_df)]
+
+    for split in splits:
+        for idx, row in split[1].iterrows():
+            src_ann_path = osp.join(ann_dir, row['ann_path'])
+            dst_ann_dir = osp.join(root_dir, f'input/{split[0]}/ann')
+            if not os.path.exists(dst_ann_dir):
+                os.makedirs(dst_ann_dir)
+            
+            shutil.copy(src_ann_path, dst_ann_dir)
+
+            src_img_path = osp.join(img_dir, row['img_path'])
+            dst_img_dir = osp.join(root_dir, f'input/{split[0]}/img')
+            if not os.path.exists(dst_img_dir):
+                os.makedirs(dst_img_dir)
+            
+            shutil.copy(src_img_path, dst_img_dir)
+
+
+
 if __name__ == '__main__':
     main(args)
+    # split(args.src, args.name)
 
