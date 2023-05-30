@@ -722,7 +722,7 @@ def split(root_dir, project_name):
 
     print(len(train_df), len(val_df), len(test_df))
 
-    splits = [('train', train_df), ('val', val_df), ('test', test_df)]
+    splits = [('train', train_df), ('val', val_df), ('eval', test_df)]
 
     for split in splits:
         for idx, row in split[1].iterrows():
@@ -740,9 +740,10 @@ def split(root_dir, project_name):
             
             shutil.copy(src_img_path, dst_img_dir)
 
+    shutil.copy(osp.join(root_dir, 'meta.json'), osp.join(root_dir, 'input'))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':    
+    split(args.src, args.name)
     main(args)
-    # split(args.src, args.name)
 
