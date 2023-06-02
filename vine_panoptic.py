@@ -58,8 +58,8 @@ def Load_json(path):
 def init_cfg(path , dataset_metadata):
 
     cfg = get_cfg()
-    config_file = "COCO-PanopticSegmentation/panoptic_fpn_R_101_3x.yaml"
-    #config_file = "COCO-PanopticSegmentation/panoptic_fpn_R_50_1x.yaml"
+    # config_file = "COCO-PanopticSegmentation/panoptic_fpn_R_101_3x.yaml"
+    config_file = "COCO-PanopticSegmentation/panoptic_fpn_R_50_1x.yaml"
 
     cfg.merge_from_file(model_zoo.get_config_file(config_file))
 
@@ -76,7 +76,7 @@ def init_cfg(path , dataset_metadata):
     #cfg.SOLVER.STEPS = (50, 80)
     cfg.SOLVER.IMS_PER_BATCH = 1
     cfg.SOLVER.BASE_LR = 0.0025     # pick a good LearningRate
-    #cfg.SOLVER.MAX_ITER = 2000    #No. of iterations 20000
+    # cfg.SOLVER.MAX_ITER = 100    #No. of iterations 20000
     #cfg.TEST.EVAL_PERIOD = 2000 # No. of iterations after which the Validation Set is evaluated. 
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = len(dataset_metadata.get("thing_classes"))# No. of Instance classes 
@@ -137,13 +137,13 @@ def lunch_training(resume = False):
     trainer = MyTrainer(cfg) #DefaultTrainer(cfg) #MyTrainer(cfg) #
     trainer.resume_or_load(resume=resume)
     torch.cuda.empty_cache()
-    return trainer.train()
+    trainer.train()
 
     #Save Config
-    f = open(cfg.OUTPUT_DIR+'/config.yml', 'w')
-    f.write(cfg.dump())
-    f.close()
-    visualize(cfg, dataset_metadata)
+    # f = open(cfg.OUTPUT_DIR+'/config.yml', 'w')
+    # f.write(cfg.dump())
+    # f.close()
+    # visualize(cfg, dataset_metadata)
     evaluation(cfg, 'eval')
 
 
