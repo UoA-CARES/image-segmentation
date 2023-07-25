@@ -1,22 +1,69 @@
 # image-segmentation
 This repository provides tools for image segmentation and label data conversion. It includes scripts for image segmentation using popular algorithms and techniques, as well as utilities for converting label data between different formats.
 
-# Dataset Preparation
-Public dataset
-- https://conservancy.umn.edu/handle/11299/206575
+# Prerequisite
+- Python >= 3.8 (Strongly recommend to use [conda](https://docs.conda.io/en/main/miniconda.html))
+  ```
+  conda create -n imgseg python=3.8
+  conda activate imgseg
+  ```
+- [Pytorch 1.13.1](https://pytorch.org/get-started/previous-versions/)
+  ```
+  pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
+  ```
+- [Detectron2](https://detectron2.readthedocs.io/en/latest/tutorials/install.html)
+  ```
+  python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
+  # (add --user if you don't have permission)
+  ```
+- [MMDetection](https://mmdetection.readthedocs.io/en/latest/get_started.html)
+  ```
+  pip install -U openmim
+  mim install mmengine
+  mim install "mmcv>=2.0.0"
+  mim install mmdet
+  ```
+
+# Installation
+Install requirements after cloning
+```
+conda activate imgseg
+cd image-segmentation
+pip install -r requirements.txt
+```
+
+# Dataset
+We at CARES group employ a carefully selected set of labeling tools([Supervisely](https://supervisely.com/), [Roboflow](https://roboflow.com/)), exclusively chosen to optimize the entire pipeline for training image detection models. To gain access to download the dataset, kindly reach out to your supervisor. We highly recommend migrating to one of these tools if you are currently using a different one.
 
 
-## Supervisely
-Export data as coco format. Please refer to [this](https://ecosystem.supervisely.com/apps/export-to-coco).
+## Export data from Supervisely
 
-## Labelbox
-Use tools/export_coco_labelbox.py to export coco dataset from a labelbox project
+To enable coco detection and segmentation, follow these steps to export your data in coco format. For the most up-to-date tutorial, please visit [the official website](https://ecosystem.supervisely.com/apps/export-to-coco).
 
-## Roboflow
+1. Navigate to the Supervisely project you wish to export.
+2. Choose the option to export it in coco format.
+3. Download the {project_name}.tar file containing the exported data.
+4. Unpack the {project_name}.tar file using the following command:
+   ```
+   tar xopf {project_name}.tar
+   ```
+
+To perform pannoptic coco segmentation, follow these steps to export your data in Supervisely format and then convert it to panoptic coco format using the python script (tools/supervisely_to_panoptic_coco.py). For the most up-to-date tutorial, please visit [the official website](https://ecosystem.supervisely.com/apps/export-to-supervisely-format).
+
+1. Navigate to the Supervisely project you wish to export.
+2. Choose the option to export it in Supervisely format.
+3. Download the {project_name}.tar file containing the exported data.
+4. Unpack the {project_name}.tar file using the following command:
+   ```
+   tar xopf {project_name}.tar
+   ```
+5. Use the python script (tools/supervisely_to_panoptic_coco.py) to convert the data to panoptic coco format.
+
+## Export data from Roboflow
 Export data as coco format. Please refer to [this](https://docs.roboflow.com/exporting-data)
 
 # Dataset Split
-Use tools/split.py to split coco dataset as train/val. 
+If your dataset doesn't have train/val splits, you can use tools/split.py to split coco dataset as train/val. 
 
 ## Usage
 
@@ -91,12 +138,6 @@ mmdetection model zoo
 - SparseInst (CVPR'2022)
 - RTMDet (ArXiv'2022)
 - BoxInst (CVPR'2021)
-
-## Configuration
-TBD
-
-## Logging
-TBD
 
 ## Train
 TBD
